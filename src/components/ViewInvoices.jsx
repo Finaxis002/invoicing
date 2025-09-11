@@ -491,7 +491,7 @@ export default function ViewInvoices() {
       {/* View Invoices Table (Existing Table) */}
       <div className="content p-4">
         <div className="mb-3 flex justify-between items-center">
-          <h2 className="text-4xl font-bold font-sans">Invoices....</h2>
+          <h2 className="text-4xl font-bold font-sans">Invoices.####</h2>
           {/* New Invoice Button */}
           <div className="flex items-center">
             <button

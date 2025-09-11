@@ -31,11 +31,11 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd ${{ secrets.SERVER_DIR }}
+          cd ${{ secrets.SERVER_DIR }}  # This should be project root (without dist/)
           git pull origin main
           npm ci --production
           npm run build
           sudo chown -R www-data:www-data dist/
           sudo chmod -R 755 dist/
-          sudo systemctl reload nginx
+          sudo systemctl restart nginx  # Use restart instead of reload
           echo "🚀 Deployment completed successfully!"
