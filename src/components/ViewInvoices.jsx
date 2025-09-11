@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../utils/secureAxios";
 import html2pdf from "html2pdf.js";
 import Swal from "sweetalert2";
-import InvoicePreview from "../Components/InvoicePreview";
+import InvoicePreview from "../components/InvoicePreview";
 import {
   FaEye,
   FaTrash,

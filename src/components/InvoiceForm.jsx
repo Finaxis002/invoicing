@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
 import { FaTrash } from "react-icons/fa";
 import { FiSave, FiDownload } from "react-icons/fi";
-import InvoicePage from "../Components/invoice/InvoicePage";
+import InvoicePage from "../components/invoice/InvoicePage";
 import CreateClientModal from "./client/CreateClientModal";
 import { useNavigate } from "react-router-dom";
 
