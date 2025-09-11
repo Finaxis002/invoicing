@@ -491,7 +491,7 @@ export default function ViewInvoices() {
       {/* View Invoices Table (Existing Table) */}
       <div className="content p-4">
         <div className="mb-3 flex justify-between items-center">
-          <h2 className="text-4xl font-bold font-sans">Invoices.####</h2>
+          <h2 className="text-4xl font-bold font-sans">Invoices.,.,.,.,.,</h2>
           {/* New Invoice Button */}
           <div className="flex items-center">
             <button
@@ -501,7 +501,7 @@ export default function ViewInvoices() {
             >
               <div className="flex justify-center items-center">
                 <FaPlusCircle className="text-s mt-1" />
-                <span className="ml-2 font-sans">New Invoice.....</span>
+                <span className="ml-2 font-sans">New Invoice</span>
               </div>
             </button>
             <ProfileDropdown />{" "}
