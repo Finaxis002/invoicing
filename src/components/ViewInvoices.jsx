@@ -501,7 +501,7 @@ export default function ViewInvoices() {
             >
               <div className="flex justify-center items-center">
                 <FaPlusCircle className="text-s mt-1" />
-                <span className="ml-2 font-sans">New Invoice</span>
+                <span className="ml-2 font-sans">New Invoice.....</span>
               </div>
             </button>
             <ProfileDropdown />{" "}
