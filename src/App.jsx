@@ -105,74 +105,106 @@ function App() {
 
   // Check for token passed from task management - MUST happen before routing
   useEffect(() => {
-    const checkForPassedToken = () => {
-      console.log("Checking for passed token...");
-      
-      // Method 1: Check localStorage for token passed from task management
-      const passedToken = localStorage.getItem('invoiceAuthToken');
-      const timestamp = localStorage.getItem('tokenTimestamp');
-      
-      // Check if token was set recently (within last 10 seconds)
-      if (passedToken && timestamp && (Date.now() - parseInt(timestamp)) < 10000) {
-        console.log("Token found in localStorage from task management");
-        localStorage.setItem('authToken', passedToken);
-        
-        // Clean up
-        localStorage.removeItem('invoiceAuthToken');
-        localStorage.removeItem('tokenTimestamp');
-        
-        setToken(passedToken);
-        setIsEmbedded(true);
-        setIsCheckingToken(false);
+  const checkForPassedToken = () => {
+    console.log("Checking for passed token...");
+    
+    // List of allowed origins for postMessage
+    const allowedOrigins = [
+      'https://tasks.sharda.co.in',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://localhost:5173',
+      'http://127.0.0.1:5173'
+    ];
+
+    // Method 1: Listen for postMessage from opener (PRIMARY METHOD)
+    const handleMessage = (event) => {
+      // Check if origin is allowed
+      if (!allowedOrigins.includes(event.origin)) {
+        console.log("Message from unauthorized origin:", event.origin);
         return;
       }
       
-      // Method 2: Check URL parameters (alternative approach)
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlToken = urlParams.get('token');
-      
-      if (urlToken) {
-        console.log("Token found in URL parameters");
-        localStorage.setItem('authToken', urlToken);
-        setToken(urlToken);
-        setIsEmbedded(true);
+      // Handle auth token
+      if (event.data.type === 'authToken' && event.data.token) {
+        console.log("Token received via postMessage from:", event.origin);
         
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-        setIsCheckingToken(false);
-        return;
-      }
-      
-      // Method 3: Listen for postMessage from opener
-      const handleMessage = (event) => {
-        if (event.origin !== 'https://tasks.sharda.co.in') return;
-        
-        if (event.data.type === 'authToken' && event.data.token) {
-          console.log("Token received via postMessage");
+        // Validate token timestamp (should be recent)
+        if (event.data.timestamp && (Date.now() - event.data.timestamp) < 30000) {
           localStorage.setItem('authToken', event.data.token);
           setToken(event.data.token);
           setIsEmbedded(true);
           setIsCheckingToken(false);
+          
+          // Send confirmation back to opener
+          if (event.source && !event.source.closed) {
+            event.source.postMessage(
+              { type: 'tokenReceived', status: 'success' },
+              event.origin
+            );
+          }
+        } else {
+          console.log("Token is too old, ignoring");
         }
-      };
-
-      window.addEventListener('message', handleMessage);
+      }
       
-      // If no token found after delay, proceed without it
-      const timeout = setTimeout(() => {
-        console.log("No token found, proceeding to normal flow");
-        setIsCheckingToken(false);
-        window.removeEventListener('message', handleMessage);
-      }, 2000); // Wait 2 seconds for token
-
-      return () => {
-        clearTimeout(timeout);
-        window.removeEventListener('message', handleMessage);
-      };
+      // Handle token requests (if we need to request token)
+      if (event.data.type === 'requestToken' && window.opener && !window.opener.closed) {
+        console.log("Token request received");
+        // We can't provide token if we don't have it
+      }
     };
 
-    checkForPassedToken();
-  }, []);
+    window.addEventListener('message', handleMessage);
+    
+    // Method 2: Try to request token from opener if we're in an embedded context
+    if (window.opener && !window.opener.closed) {
+      console.log("We have an opener window, requesting token");
+      try {
+        // Request token from opener
+        window.opener.postMessage(
+          { 
+            type: 'requestToken', 
+            source: 'invoicingApp',
+            requestedAt: Date.now()
+          },
+          '*' // Will be validated by the opener
+        );
+      } catch (error) {
+        console.log("Could not request token from opener:", error);
+      }
+    }
+    
+    // Method 3: Check URL parameters for token (fallback)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get('token');
+    if (urlToken) {
+      console.log("Token found in URL parameters");
+      localStorage.setItem('authToken', urlToken);
+      setToken(urlToken);
+      setIsEmbedded(true);
+      
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setIsCheckingToken(false);
+      return;
+    }
+    
+    // If no token found after delay, proceed without it
+    const timeout = setTimeout(() => {
+      console.log("No token found, proceeding to normal flow");
+      setIsCheckingToken(false);
+      window.removeEventListener('message', handleMessage);
+    }, 5000); // Wait 5 seconds for token
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('message', handleMessage);
+    };
+  };
+
+  checkForPassedToken();
+}, []);
 
   // Show loading spinner while checking for token
   if (isCheckingToken) {

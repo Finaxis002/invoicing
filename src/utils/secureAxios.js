@@ -85,7 +85,7 @@
 import axios from "axios";
 
 const secureAxios = axios.create({
-  baseURL: "https://taskbe.sharda.co.in/api",
+  baseURL: "https://taskbe.sharda.co.in/api" || "http://localhost:5173/api",
   withCredentials: true,
 });
 
