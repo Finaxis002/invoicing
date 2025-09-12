@@ -6,7 +6,7 @@ import InvoiceForm from './components/InvoiceForm'
 import LoginPage from './components/LoginPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
-import axios from "../utils/secureAxios";
+import axios from "./utils/secureAxios";
 
 function App() {
    const [token, setToken] = useState(localStorage.getItem('authToken'));
