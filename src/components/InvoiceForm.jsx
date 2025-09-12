@@ -945,8 +945,8 @@ export default function InvoiceForm({
 
   return (
     <>
-      <div className="flex justify-between mt-4">
-        <h1 className="text-3xl p-2 font-bold font-sans">
+      <div className="flex justify-between  bg-[#F0F0F0]">
+        <h1 className="text-3xl p-2 mt-4 font-bold font-sans pt-4 pb-2">
           {isEdit ? "Update & Download Invoice" : "Create Invoice"}
            </h1>
            {!isEdit && 

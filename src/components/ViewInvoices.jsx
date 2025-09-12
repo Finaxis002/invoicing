@@ -688,7 +688,7 @@ export default function ViewInvoices() {
           ) : (
             <table
               border="1"
-              className="min-w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm mt-6"
+              className="min-w-full border border-gray-200 rounded-lg overflow-hidden shadow-lg mt-6"
             >
               <thead className="bg-gray-100 text-gray-700 font-semibold">
                 <tr>
@@ -744,7 +744,7 @@ export default function ViewInvoices() {
 
                       {showEditModal && invoiceToEdit && (
                         <div className="fixed inset-0 z-[1001] flex items-center justify-center">
-                          <div className="bg-white rounded-md shadow-xl w-[100vw] pt-10">
+                          <div className="bg-white rounded-md shadow-xl w-[100vw]">
                             <InvoiceForm
                               key={invoiceToEdit.invoiceNumber}
                               initialInvoice={invoiceToEdit}
