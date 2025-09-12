@@ -63,21 +63,22 @@ export default function ViewInvoices() {
   };
 
   const navigate = useNavigate();
-  const openEdit = async (inv) => {
-    setShowEditModal(true);
-    setInvoiceToEdit(null); // show a spinner if you want
-    try {
-      const { data } = await axios.get(
-        `https://taskbe.sharda.co.in/api/invoices/${encodeURIComponent(
-          inv.invoiceNumber
-        )}`
-      );
-      setInvoiceToEdit(data); // always DB truth
-    } catch (e) {
-      setShowEditModal(false);
-      Swal.fire("Error", "Could not load invoice.", "error");
-    }
-  };
+
+  // const openEdit = async (inv) => {
+  //   setShowEditModal(true);
+  //   setInvoiceToEdit(null); // show a spinner if you want
+  //   try {
+  //     const { data } = await axios.get(
+  //       `https://taskbe.sharda.co.in/api/invoices/${encodeURIComponent(
+  //         inv.invoiceNumber
+  //       )}`
+  //     );
+  //     setInvoiceToEdit(data); // always DB truth
+  //   } catch (e) {
+  //     setShowEditModal(false);
+  //     Swal.fire("Error", "Could not load invoice.", "error");
+  //   }
+  // };
 
   const handleEdited = (updated) => {
     setInvoices((prev) =>
@@ -89,14 +90,54 @@ export default function ViewInvoices() {
   };
 
   useEffect(() => {
-    axios
-      .get("/clients/details")
+    console.log("Token from localStorage:", localStorage.getItem("authToken"));
+  }, []);
+
+  // Temporary: Use regular axios without security headers
+// useEffect(() => {
+//   axios.get("https://taskbe.sharda.co.in/api/clients/details", {
+//     withCredentials: true
+//   })
+//   .then(res => console.log("Clients:", res.data))
+//   .catch(err => console.error("Error:", err.response?.data));
+// }, []);
+// console.log("Token from localStorage:", localStorage.getItem("authToken"));
+
+    useEffect(() => {
+    axios.get("/clients/details")
       .then((res) => {
         console.log("Clients fetched:", res.data);
         setClients(res.data);
       })
-      .catch(console.error);
+      .catch(error => {
+        console.error("Error fetching clients:", error);
+        if (error.response?.status === 401) {
+          // Token might be invalid/expired
+          Swal.fire("Session Expired", "Please login again", "error");
+          navigate("/login-page");
+        }
+      });
   }, []);
+
+   const openEdit = async (inv) => {
+    setShowEditModal(true);
+    setInvoiceToEdit(null);
+    try {
+      // USE secureAxios with relative path (baseURL is already set)
+      const { data } = await axios.get(`/invoices/${encodeURIComponent(inv.invoiceNumber)}`);
+      setInvoiceToEdit(data);
+    } catch (e) {
+      setShowEditModal(false);
+      console.error("Error loading invoice:", e);
+      if (e.response?.status === 401) {
+        Swal.fire("Session Expired", "Please login again", "error");
+        navigate("/login-page");
+      } else {
+        Swal.fire("Error", "Could not load invoice.", "error");
+      }
+    }
+  };
+
 
   const clientOptions = clients.map((client) => ({
     value: client._id,
@@ -133,6 +174,7 @@ export default function ViewInvoices() {
 
     fetchInitialData();
   }, []);
+
 
   useEffect(() => {
     console.log("Selected client changed:", selectedClient);
@@ -388,10 +430,10 @@ export default function ViewInvoices() {
     try {
       setExporting(true);
 
-      // 1) Send OTP
-      await axios.post("https://taskbe.sharda.co.in/api/send-otp-view-invoice");
+      // 1) Send OTP - USE relative path
+      await axios.post("/send-otp-view-invoice");
 
-      // 2) Ask user
+      // 2) Ask user for OTP
       const { value: otp, isConfirmed } = await Swal.fire({
         title: "Verify OTP",
         text: "Enter the 6-digit OTP sent to your email",
@@ -412,20 +454,16 @@ export default function ViewInvoices() {
       if (toDate) params.toDate = toDate;
       if (selectedClient?.value) params.clientId = selectedClient.value;
 
-      // 4) Call export with x-otp header
-      const res = await axios.get(
-        "https://taskbe.sharda.co.in/api/invoices/export.xlsx",
-        {
-          params,
-          responseType: "blob",
-          headers: { "x-otp": String(otp).trim() },
-        }
-      );
+      // 4) Call export with relative path
+      const res = await axios.get("/invoices/export.xlsx", {
+        params,
+        responseType: "blob",
+        headers: { "x-otp": String(otp).trim() },
+      });
 
       const dispo = res.headers["content-disposition"] || "";
       const m = dispo.match(/filename="?(.*)"?$/);
-      const filename =
-        (m && m[1]) || `invoices_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      const filename = (m && m[1]) || `invoices_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
       const blob = new Blob([res.data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -449,6 +487,8 @@ export default function ViewInvoices() {
       setExporting(false);
     }
   };
+
+
 
   // Is this invoice a GST invoice?
   const isGSTInvoice = (inv) => !!inv?.selectedFirm?.gstin;
