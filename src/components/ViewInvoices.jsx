@@ -17,13 +17,8 @@ import InvoiceForm from "./InvoiceForm";
 import ProfileDropdown from "./ProfileDropdown";
 
 export default function ViewInvoices() {
-  const [firms] = useState([
-    { name: "Finaxis Business Consultancy", gstin: "GST5454" },
-    { name: "Sharda Associates", gstin: "GST9876" },
-    { name: "Kailash Real Estate", gstin: "GST9855" },
-    { name: "Bhojpal Realities", gstin: "GST9878" },
-  ]);
-  console.log("ViewInvoices component rendered");
+  const [firms, setFirms] = useState([]);
+
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [invoices, setInvoices] = useState([]);
@@ -90,26 +85,38 @@ export default function ViewInvoices() {
   };
 
   useEffect(() => {
-    console.log("Token from localStorage:", localStorage.getItem("authToken"));
+    const fetchFirms = async () => {
+      try {
+        const res = await axios.get("https://taskbe.sharda.co.in/firms", {
+          withCredentials: true, // Ensure cookies are sent
+        });
+        setFirms(res.data);
+      } catch (error) {
+        console.error("Error fetching firms:", error);
+      }
+    };
+
+    fetchFirms();
   }, []);
 
   // Temporary: Use regular axios without security headers
-// useEffect(() => {
-//   axios.get("https://taskbe.sharda.co.in/api/clients/details", {
-//     withCredentials: true
-//   })
-//   .then(res => console.log("Clients:", res.data))
-//   .catch(err => console.error("Error:", err.response?.data));
-// }, []);
-// console.log("Token from localStorage:", localStorage.getItem("authToken"));
+  // useEffect(() => {
+  //   axios.get("https://taskbe.sharda.co.in/api/clients/details", {
+  //     withCredentials: true
+  //   })
+  //   .then(res => console.log("Clients:", res.data))
+  //   .catch(err => console.error("Error:", err.response?.data));
+  // }, []);
+  // console.log("Token from localStorage:", localStorage.getItem("authToken"));
 
-    useEffect(() => {
-    axios.get("/clients/details")
+  useEffect(() => {
+    axios
+      .get("/clients/details")
       .then((res) => {
         console.log("Clients fetched:", res.data);
         setClients(res.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching clients:", error);
         if (error.response?.status === 401) {
           // Token might be invalid/expired
@@ -119,12 +126,14 @@ export default function ViewInvoices() {
       });
   }, []);
 
-   const openEdit = async (inv) => {
+  const openEdit = async (inv) => {
     setShowEditModal(true);
     setInvoiceToEdit(null);
     try {
       // USE secureAxios with relative path (baseURL is already set)
-      const { data } = await axios.get(`/invoices/${encodeURIComponent(inv.invoiceNumber)}`);
+      const { data } = await axios.get(
+        `/invoices/${encodeURIComponent(inv.invoiceNumber)}`
+      );
       setInvoiceToEdit(data);
     } catch (e) {
       setShowEditModal(false);
@@ -137,7 +146,6 @@ export default function ViewInvoices() {
       }
     }
   };
-
 
   const clientOptions = clients.map((client) => ({
     value: client._id,
@@ -174,7 +182,6 @@ export default function ViewInvoices() {
 
     fetchInitialData();
   }, []);
-
 
   useEffect(() => {
     console.log("Selected client changed:", selectedClient);
@@ -463,7 +470,8 @@ export default function ViewInvoices() {
 
       const dispo = res.headers["content-disposition"] || "";
       const m = dispo.match(/filename="?(.*)"?$/);
-      const filename = (m && m[1]) || `invoices_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      const filename =
+        (m && m[1]) || `invoices_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
       const blob = new Blob([res.data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -487,8 +495,6 @@ export default function ViewInvoices() {
       setExporting(false);
     }
   };
-
-
 
   // Is this invoice a GST invoice?
   const isGSTInvoice = (inv) => !!inv?.selectedFirm?.gstin;
@@ -549,7 +555,7 @@ export default function ViewInvoices() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+        <div className="bg-[#F0F0F0] p-4 rounded-lg shadow-sm mb-6 ">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             {/* Client Filter */}
             <div>
@@ -561,7 +567,27 @@ export default function ViewInvoices() {
                 onChange={setSelectedClient}
                 placeholder="All Clients"
                 isClearable
-                className="text-sm"
+                className="text-sm "
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: "transparent", // Transparent background
+                    borderColor: state.isFocused ? "#7DA2C6" : "#d1d5db", // Border color on focus and default
+                    boxShadow: state.isFocused ? "0 0 0 1px #7DA2C6" : "none", // Add shadow when focused
+                    "&:hover": {
+                      borderColor: "#7DA2C6", // Hover border color
+                    },
+                  }),
+
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#1f2937", // Dark text color for the selected item
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#9ca3af", // Light placeholder text color
+                  }),
+                }}
               />
             </div>
 
@@ -576,6 +602,26 @@ export default function ViewInvoices() {
                 placeholder="All Firms"
                 isClearable
                 className="text-sm"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: "transparent", // Transparent background
+                    borderColor: state.isFocused ? "#7DA2C6" : "#d1d5db", // Border color on focus and default
+                    boxShadow: state.isFocused ? "0 0 0 1px #7DA2C6" : "none", // Add shadow when focused
+                    "&:hover": {
+                      borderColor: "#7DA2C6", // Hover border color
+                    },
+                  }),
+
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#1f2937", // Dark text color for the selected item
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#9ca3af", // Light placeholder text color
+                  }),
+                }}
               />
             </div>
 
