@@ -26,7 +26,7 @@ const ProfileDropdown = () => {
       {/* Dropdown Menu */}
       {isMenuOpen && (
         <div className="origin-top-right absolute right-0 mt-2 w-30 shadow-lg bg-white focus:outline-none">
-          <div className="py-1">
+          <div className="py-1 z-50 bg-[#F0F0F0] relative">
             {/* My Account Option */}
             <button
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold"
