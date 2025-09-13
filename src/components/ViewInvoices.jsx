@@ -1197,7 +1197,7 @@ export default function ViewInvoices() {
     // Filter by firm
     if (selectedFirm) {
       result = result.filter(
-        (invoice) => invoice.selectedFirm?.name === selectedFirm.value
+        (invoice) => invoice.selectedFirm?.name === selectedFirm.label
       );
     }
 
@@ -1205,65 +1205,65 @@ export default function ViewInvoices() {
     setCurrentPage(1); // Reset to first page when filters change
   }, [searchQuery, selectedClient, fromDate, toDate, selectedFirm, invoices]);
 
-  // Download invoice as PDF
-  const downloadInvoice = (invoice) => {
-    setInvoiceToView(invoice);
-    setShowInvoiceModal(true);
-  };
+  // // Download invoice as PDF
+  // const downloadInvoice = (invoice) => {
+  //   setInvoiceToView(invoice);
+  //   setShowInvoiceModal(true);
+  // };
 
-  const handleGeneratePDF = () => {
-    const element = document.getElementById("invoice-to-print");
-    if (!element) return;
+  // const handleGeneratePDF = () => {
+  //   const element = document.getElementById("invoice-to-print");
+  //   if (!element) return;
 
-    // Save original styles
-    const originalHeight = element.style.height;
-    const originalMaxHeight = element.style.maxHeight;
-    const originalOverflow = element.style.overflow;
-    const originalWidth = element.style.width;
+  //   // Save original styles
+  //   const originalHeight = element.style.height;
+  //   const originalMaxHeight = element.style.maxHeight;
+  //   const originalOverflow = element.style.overflow;
+  //   const originalWidth = element.style.width;
 
-    // Expand fully for capture
-    element.style.height = "auto";
-    element.style.maxHeight = "none";
-    element.style.overflow = "visible";
-    element.style.width = "794px";
+  //   // Expand fully for capture
+  //   element.style.height = "auto";
+  //   element.style.maxHeight = "none";
+  //   element.style.overflow = "visible";
+  //   element.style.width = "794px";
 
-    const opt = {
-      margin: 0,
-      filename: `${invoiceToView.invoiceNumber}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        scrollY: 0,
-      },
-      jsPDF: {
-        unit: "px",
-        format: [794, 1123],
-        orientation: "portrait",
-      },
-    };
+  //   const opt = {
+  //     margin: 0,
+  //     filename: `${invoiceToView.invoiceNumber}.pdf`,
+  //     image: { type: "jpeg", quality: 0.98 },
+  //     html2canvas: {
+  //       scale: 2,
+  //       useCORS: true,
+  //       scrollY: 0,
+  //     },
+  //     jsPDF: {
+  //       unit: "px",
+  //       format: [794, 1123],
+  //       orientation: "portrait",
+  //     },
+  //   };
 
-    html2pdf()
-      .set(opt)
-      .from(element)
-      .save()
-      .then(() => {
-        setShowInvoiceModal(false);
-        // Restore styles
-        element.style.height = originalHeight;
-        element.style.maxHeight = originalMaxHeight;
-        element.style.overflow = originalOverflow;
-        element.style.width = originalWidth;
-      })
-      .catch((error) => {
-        console.error("PDF generation error:", error);
-        // Restore styles even if error
-        element.style.height = originalHeight;
-        element.style.maxHeight = originalMaxHeight;
-        element.style.overflow = originalOverflow;
-        element.style.width = originalWidth;
-      });
-  };
+  //   html2pdf()
+  //     .set(opt)
+  //     .from(element)
+  //     .save()
+  //     .then(() => {
+  //       setShowInvoiceModal(false);
+  //       // Restore styles
+  //       element.style.height = originalHeight;
+  //       element.style.maxHeight = originalMaxHeight;
+  //       element.style.overflow = originalOverflow;
+  //       element.style.width = originalWidth;
+  //     })
+  //     .catch((error) => {
+  //       console.error("PDF generation error:", error);
+  //       // Restore styles even if error
+  //       element.style.height = originalHeight;
+  //       element.style.maxHeight = originalMaxHeight;
+  //       element.style.overflow = originalOverflow;
+  //       element.style.width = originalWidth;
+  //     });
+  // };
 
   // Delete invoice
   const handleDeleteInvoice = async (invoiceNumber) => {
@@ -1292,10 +1292,10 @@ export default function ViewInvoices() {
   };
 
   // Firm options for the dropdown
-  const firmOptions = firms.map((firm) => ({
-    value: firm.name,
-    label: firm.name,
-  }));
+ const firmOptions = firms.map((firm) => ({
+  value: firm._id,  // Ensure you're passing the _id (firmId) here, not firm.name
+  label: firm.name,
+}));
 
   const handleFromDateChange = (e) => {
     const newFromDate = e.target.value;
@@ -1309,64 +1309,144 @@ export default function ViewInvoices() {
   };
 
   // Export invoices to Excel
-  const exportInvoices = async () => {
-    try {
-      setExporting(true);
-      await axios.post("/send-otp-view-invoice");
+//   const exportInvoices = async () => {
+//   try {
+//     setExporting(true);
 
-      const { value: otp, isConfirmed } = await Swal.fire({
-        title: "Verify OTP",
-        text: "Enter the 6-digit OTP sent to your email",
-        input: "text",
-        inputAttributes: {
-          inputmode: "numeric",
-          autocomplete: "one-time-code",
-        },
-        inputValidator: (v) => (!v ? "Please enter OTP" : undefined),
-        showCancelButton: true,
-        confirmButtonText: "Verify",
-      });
+//     // Step 1: Collect the filters
+//     const params = {};
 
-      if (!isConfirmed) return;
+//     // Add the filters to the params object
+//     if (fromDate) params.fromDate = fromDate;
+//     if (toDate) params.toDate = toDate;
+//     if (selectedClient?.value) params.clientId = selectedClient.value;
+//    if (selectedFirm?.value) {
+//       params.firmId = selectedFirm.value;
+//       console.log("Selected firm value:", selectedFirm.value); // Debug log
+//       console.log("Type of firm value:", typeof selectedFirm.value); // Debug log
+//     }
 
-      const params = {};
-      if (fromDate) params.fromDate = fromDate;
-      if (toDate) params.toDate = toDate;
-      if (selectedClient?.value) params.clientId = selectedClient.value;
+//     // Step 2: Send OTP for export (if needed)
+//     await axios.post("/send-otp-view-invoice");
 
-      const res = await axios.get("/invoices/export.xlsx", {
-        params,
-        responseType: "blob",
-        headers: { "x-otp": String(otp).trim() },
-      });
+//     const { value: otp, isConfirmed } = await Swal.fire({
+//       title: "Verify OTP",
+//       text: "Enter the 6-digit OTP sent to your email",
+//       input: "text",
+//       inputAttributes: {
+//         inputmode: "numeric",
+//         autocomplete: "one-time-code",
+//       },
+//       inputValidator: (v) => (!v ? "Please enter OTP" : undefined),
+//       showCancelButton: true,
+//       confirmButtonText: "Verify",
+//     });
 
-      const dispo = res.headers["content-disposition"] || "";
-      const m = dispo.match(/filename="?(.*)"?$/);
-      const filename =
-        (m && m[1]) || `invoices_${new Date().toISOString().slice(0, 10)}.xlsx`;
+//     if (!isConfirmed) return;
 
-      const blob = new Blob([res.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Export failed", err);
-      Swal.fire(
-        "Export failed",
-        err?.response?.data?.error || "Could not export invoices.",
-        "error"
-      );
-    } finally {
-      setExporting(false);
+//     // Step 3: Call the backend to export the filtered invoices
+//     const res = await axios.get("/invoices/export.xlsx", {
+//       params,
+//       responseType: "blob",
+//       headers: { "x-otp": String(otp).trim() },
+//     });
+
+//     // Step 4: Handle the response and download the file
+//     const dispo = res.headers["content-disposition"] || "";
+//     const m = dispo.match(/filename="?(.*)"?$/);
+//     const filename =
+//       (m && m[1]) || `invoices_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+//     const blob = new Blob([res.data], {
+//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+//     });
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = filename;
+//     document.body.appendChild(a);
+//     a.click();
+//     a.remove();
+//     URL.revokeObjectURL(url);
+//   } catch (err) {
+//     console.error("Export failed", err);
+//     Swal.fire(
+//       "Export failed",
+//       err?.response?.data?.error || "Could not export invoices.",
+//       "error"
+//     );
+//   } finally {
+//     setExporting(false);
+//   }
+// };
+
+const exportInvoices = async () => {
+  try {
+    setExporting(true);
+
+    const params = {};
+
+    // Add the filters to the params object
+    if (fromDate) params.fromDate = fromDate;
+    if (toDate) params.toDate = toDate;
+    if (selectedClient?.value) params.clientId = selectedClient.value;
+    if (selectedFirm?.value) {
+      params.firmId = selectedFirm.value; // Pass the firmId (ObjectId)
     }
-  };
+
+    // Proceed with OTP check and export
+    await axios.post("/send-otp-view-invoice");
+
+    const { value: otp, isConfirmed } = await Swal.fire({
+      title: "Verify OTP",
+      text: "Enter the 6-digit OTP sent to your email",
+      input: "text",
+      inputAttributes: {
+        inputmode: "numeric",
+        autocomplete: "one-time-code",
+      },
+      inputValidator: (v) => (!v ? "Please enter OTP" : undefined),
+      showCancelButton: true,
+      confirmButtonText: "Verify",
+    });
+
+    if (!isConfirmed) return;
+
+    // Export the invoices
+    const res = await axios.get("/invoices/export.xlsx", {
+      params,
+      responseType: "blob",
+      headers: { "x-otp": String(otp).trim() },
+    });
+
+    const dispo = res.headers["content-disposition"] || "";
+    const m = dispo.match(/filename="?(.*)"?$/);
+    const filename =
+      (m && m[1]) || `invoices_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    const blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Export failed", err);
+    Swal.fire(
+      "Export failed",
+      err?.response?.data?.error || "Could not export invoices.",
+      "error"
+    );
+  } finally {
+    setExporting(false);
+  }
+};
+
 
   // Check if invoice is GST invoice
   const isGSTInvoice = (inv) => !!inv?.selectedFirm?.gstin;
@@ -1408,6 +1488,63 @@ export default function ViewInvoices() {
     setToDate("");
     setSearchQuery("");
   };
+
+  const handleStatusChange = async (invoice) => {
+  const result = await Swal.fire({
+    title: 'Mark as Paid?',
+    text: 'Do you want to generate a final invoice for this proforma invoice?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, generate final invoice',
+    cancelButtonText: 'No, just mark as paid'
+  });
+
+  if (result.isConfirmed) {
+    // Generate a new invoice with type "Invoice" AND update the original status
+    try {
+      const response = await axios.post('/invoices/convert-proforma', {
+        proformaInvoiceNumber: invoice.invoiceNumber
+      });
+      
+      // Refresh the invoices list to get both updated invoices
+      const invoicesRes = await axios.get('/invoices');
+      const sortedInvoices = [...(invoicesRes.data || [])].sort(
+        (a, b) => new Date(b.invoiceDate) - new Date(a.invoiceDate)
+      );
+      setInvoices(sortedInvoices);
+      setFilteredInvoices(sortedInvoices);
+
+      Swal.fire('Success!', 'Final invoice has been created and original marked as paid.', 'success');
+    } catch (error) {
+      console.error('Error creating final invoice:', error);
+      Swal.fire('Error', 'Failed to create final invoice.', 'error');
+    }
+  } else if (result.dismiss === Swal.DismissReason.cancel) {
+    // Just update the status to paid (without creating new invoice)
+    try {
+      await axios.patch(`/invoices/${invoice.invoiceNumber}/status`, {
+        status: "paid"
+      });
+      
+      // Refresh the invoices list
+      const invoicesRes = await axios.get('/invoices');
+      const sortedInvoices = [...(invoicesRes.data || [])].sort(
+        (a, b) => new Date(b.invoiceDate) - new Date(a.invoiceDate)
+      );
+      setInvoices(sortedInvoices);
+      setFilteredInvoices(sortedInvoices);
+
+      Swal.fire('Updated!', 'Invoice has been marked as paid.', 'success');
+    } catch (error) {
+      console.error('Error updating invoice status:', error);
+      Swal.fire('Error', 'Failed to update invoice status.', 'error');
+    }
+  }
+};
+
+  
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -1701,8 +1838,24 @@ export default function ViewInvoices() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            Paid
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              inv.status === "pending"
+                                ? "bg-yellow-100 text-yellow-800 cursor-pointer hover:bg-yellow-200"
+                                : "bg-green-100 text-green-800"
+                            }`}
+                            onClick={() => {
+                              if (inv.status === "pending") {
+                                handleStatusChange(inv);
+                              }
+                            }}
+                            title={
+                              inv.status === "pending"
+                                ? "Click to mark as paid"
+                                : "Paid"
+                            }
+                          >
+                            {inv.status === "pending" ? "Pending" : "Paid"}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -1801,7 +1954,7 @@ export default function ViewInvoices() {
       {/* Edit Invoice Modal */}
       {showEditModal && invoiceToEdit && (
         <div className="fixed inset-0 z-[1001] flex items-center justify-center">
-          <div className="bg-white rounded-md shadow-xl w-[100vw] h-[100vh] overflow-auto">
+          <div className="bg-white rounded-md shadow-xl w-[100vw] h-[100vh]">
             <div>
               <InvoiceForm
                 key={invoiceToEdit.invoiceNumber}

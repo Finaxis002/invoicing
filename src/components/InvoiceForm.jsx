@@ -5,7 +5,7 @@ import "../css/InvoiceForm.css";
 import axios from "../utils/secureAxios";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
-import { FaTrash } from "react-icons/fa";
+import { FaBackspace, FaBackward, FaTrash } from "react-icons/fa";
 import { FiSave, FiDownload } from "react-icons/fi";
 import InvoicePage from "../components/invoice/InvoicePage";
 import CreateClientModal from "./client/CreateClientModal";
@@ -944,119 +944,716 @@ export default function InvoiceForm({
   const [notesPage1, notesPage2] = splitNotesForPages(notes);
 
   return (
+    // <>
+    //   <div className="flex justify-between  bg-[#F0F0F0]">
+    //     <h1 className="text-3xl p-2 mt-4 font-bold font-sans  pb-2">
+    //       {isEdit ? "Update & Download Invoice" : "Create Invoice"}
+    //        </h1>
+    //        {!isEdit && 
+    //     <button
+    //       onClick={handleBack}
+    //       style={{ backgroundColor: "#7DA2C6" }}
+    //       className="flex items-center justify-center gap-2 font-sans fixed top-4 right-4 py-3 px-6 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white  shadow-md hover:from-blue-700 hover:to-indigo-700 transition-all"
+    //     >
+    //       <FaBackward className="text-sm" />
+    //       Back to Invoices
+    //     </button>
+    //     }
+    //   </div>
+    //   <div className=" flex gap-5 p-5 bg-white overflow-x-auto items-start max-h-[95vh] overflow-y-hidden">
+    //     {/* Left form side */}
+    //     <div
+    //       className="scrollable-panel flex-none  h-full overflow-y-auto pr-2 box-border pl-1"
+    //       style={{ width: "50%", maxHeight: "90vh", overflowY: "auto" }}
+    //     >
+    //       <div className="max-h-[90vh] overflow-y-auto pt-5 pr-1">
+    //         {/* ... Your left side inputs and controls ... */}
+    //         <div>
+    //           <div className="flex gap-2 justify-center items-center mb-3">
+    //             {isEdit && (
+    //               <button
+    //                 onClick={handleUpdateInvoice} // Function to handle updating invoice
+    //                 className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-md hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center gap-2"
+    //                 title="Update Invoice"
+    //               >
+    //                 <FiSave className="w-4 h-4" />
+    //                 <span>Update Invoice</span>
+    //               </button>
+    //             )}
+
+    //             {/* Download PDF Button (Only visible in edit mode) */}
+    //             {isEdit && (
+    //               <button
+    //                 onClick={handleDownloadPDF} // Function to handle downloading PDF
+    //                 className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-600 text-white rounded-lg shadow-md hover:from-green-700 hover:to-green-700 transition-all flex items-center gap-2"
+    //                 title="Download PDF"
+    //               >
+    //                 <FiDownload className="w-4 h-4" />
+    //                 <span>Download PDF</span>
+    //               </button>
+    //             )}
+
+    //             {/* Combined button for Save & Generate PDF in non-edit mode */}
+    //             {!isEdit && (
+    //               <button
+    //                 onClick={handleSaveAndDownloadPDF} // Function to save and download PDF
+    //                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center gap-2"
+    //                 title="Save and Download PDF"
+    //               >
+    //                 <FiSave className="w-4 h-4" />
+    //                 <span>Save & Generate PDF</span>
+    //                 <FiDownload className="w-4 h-4" />
+    //               </button>
+    //             )}
+
+    //             {onClose && (
+    //               <button
+    //                 onClick={onClose}
+    //                 className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+    //               >
+    //                 Close
+    //               </button>
+    //             )}
+    //             {/* You can add a close button as well */}
+    //             {!isEdit && 
+    //             <button
+    //               onClick={handleBack}
+    //               className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+    //             >
+    //               Close
+    //             </button>
+    //             }
+    //           </div>
+    //         </div>
+
+    //         <div className="space-y-1">
+    //           {/* Date Range */}
+    //           {!isEdit && (
+    //             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    //               <div>
+    //                 <label className="block text-sm font-medium text-gray-700">
+    //                   From Date
+    //                 </label>
+    //                 <input
+    //                   type="date"
+    //                   value={fromDate}
+    //                   onChange={(e) => setFromDate(e.target.value)}
+    //                   max={toDate || undefined}
+    //                   className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                 />
+    //               </div>
+    //               <div>
+    //                 <label className="block text-sm font-medium text-gray-700">
+    //                   To Date
+    //                 </label>
+    //                 <input
+    //                   type="date"
+    //                   value={toDate}
+    //                   onChange={(e) => setToDate(e.target.value)}
+    //                   min={fromDate || undefined}
+    //                   className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                 />
+    //               </div>
+    //             </div>
+    //           )}
+
+    //           {isEdit && (
+    //             <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 mb-3">
+    //               <div className="col-span-2">
+    //                 <label className="block text-xs text-gray-600">
+    //                   Invoice No.
+    //                 </label>
+    //                 <input
+    //                   readOnly
+    //                   value={invoiceNumber}
+    //                   className={`mt-1 w-full border rounded-md px-3 py-2 shadow-sm
+    //         ${
+    //           isEdit
+    //             ? "bg-yellow-50 border-yellow-300 text-gray-500"
+    //             : "border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //         }
+    //         transition-colors duration-300 ease-in-out`}
+    //                   aria-disabled={isEdit}
+    //                   onMouseDown={(e) => {
+    //                     if (isEdit) e.preventDefault();
+    //                   }}
+    //                   onKeyDown={(e) => {
+    //                     if (
+    //                       isEdit &&
+    //                       !["Tab", "Shift", "Escape"].includes(e.key)
+    //                     )
+    //                       e.preventDefault();
+    //                   }}
+    //                 />
+    //               </div>
+    //             </div>
+    //           )}
+
+    //           {/* Firm Selection */}
+
+    //           <div>
+    //             <h2 className="text-lg font-semibold text-gray-800 mb-2">
+    //               Your Details
+    //             </h2>
+    //             <label className="block text-sm font-medium text-gray-700">
+    //               Select Firm
+    //             </label>
+
+    //             {firmsLoading ? (
+    //               <div className="mt-1 text-sm text-gray-500">
+    //                 Loading firms…
+    //               </div>
+    //             ) : firmsError ? (
+    //               <div className="mt-1 text-sm text-red-600">{firmsError}</div>
+    //             ) : (
+    //               <select
+    //                 value={selectedFirmId}
+    //                 onChange={(e) => setSelectedFirmId(e.target.value)}
+    //                 disabled={isEdit}
+    //                 // className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                 className={`mt-1 w-full border rounded-md px-3 py-2 shadow-sm 
+    //                 ${
+    //                   isEdit
+    //                     ? "locked-field locked-cursor bg-yellow-50 border-yellow-300"
+    //                     : "border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                 }`}
+    //                 aria-disabled={isEdit}
+    //                 onMouseDown={(e) => {
+    //                   if (isEdit) e.preventDefault();
+    //                 }}
+    //                 onKeyDown={(e) => {
+    //                   if (isEdit && !["Tab", "Shift", "Escape"].includes(e.key))
+    //                     e.preventDefault();
+    //                 }}
+    //               >
+    //                 {firms.map((f) => (
+    //                   <option key={f._id} value={f._id}>
+    //                     {f.name}
+    //                   </option>
+    //                 ))}
+    //               </select>
+    //             )}
+    //           </div>
+
+    //           {selectedFirm?.banks?.length > 0 && (
+    //             <div>
+    //               <label className="block text-sm font-medium text-gray-700">
+    //                 Select Bank Account
+    //               </label>
+    //               <select
+    //                 value={selectedBankIndex}
+    //                 onChange={(e) =>
+    //                   setSelectedBankIndex(parseInt(e.target.value))
+    //                 }
+    //                 className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //               >
+    //                 {selectedFirm?.banks?.map((bank, idx) => (
+    //                   <option key={bank._id || idx} value={idx}>
+    //                     {bank.label ||
+    //                       `${bank.bankName || bank.name} - ${
+    //                         bank.accountNumber || bank.account
+    //                       }`}
+    //                   </option>
+    //                 ))}
+    //               </select>
+    //             </div>
+    //           )}
+
+    //           {/* Invoice Type */}
+    //           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    //             <div>
+    //               <label className="block text-sm font-medium text-gray-700">
+    //                 Invoice Type
+    //               </label>
+    //               <select
+    //                 value={invoiceType}
+    //                 onChange={(e) => setInvoiceType(e.target.value)}
+    //                 disabled={isEdit}
+    //                 // className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                 className={`mt-1 w-full border rounded-md px-3 py-2 shadow-sm
+    //               ${
+    //                 isEdit
+    //                   ? "locked-field locked-cursor"
+    //                   : "border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //               }`}
+    //                 aria-disabled={isEdit}
+    //                 onMouseDown={(e) => {
+    //                   if (isEdit) e.preventDefault();
+    //                 }}
+    //                 onKeyDown={(e) => {
+    //                   if (isEdit && !["Tab", "Shift", "Escape"].includes(e.key))
+    //                     e.preventDefault();
+    //                 }}
+    //               >
+    //                 {invoiceTypes.map((type) => (
+    //                   <option key={type}>{type}</option>
+    //                 ))}
+    //               </select>
+    //             </div>
+    //             <div>
+    //               <label className="block text-sm font-medium text-gray-700">
+    //                 Invoice Date
+    //               </label>
+    //               <input
+    //                 type="date"
+    //                 value={invoiceDate}
+    //                 onChange={(e) => setInvoiceDate(e.target.value)}
+    //                 className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //               />
+    //             </div>
+    //           </div>
+
+    //           <div>
+    //             <h2 className="text-lg font-semibold text-gray-800 mb-2">
+    //               Customer Details
+    //             </h2>
+    //             {isEdit ? (
+    //               // Edit Mode: User can modify customer details
+    //               <div className="flex flex-col gap-2">
+    //                 <input
+    //                   type="text"
+    //                   value={customer?.name || ""}
+    //                   onChange={(e) =>
+    //                     setCustomer({ ...customer, name: e.target.value })
+    //                   }
+    //                   className="mt-1 w-full border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                   placeholder="Enter Customer Name"
+    //                 />
+    //                 <CreatableSelect
+    //                   options={clientOptions}
+    //                   value={selectedClientOption}
+    //                   onChange={(option) => {
+    //                     setSelectedClientOption(option);
+    //                     // Fetch selected client details
+    //                     const selectedClient = clients.find(
+    //                       (client) => client._id === option.value
+    //                     );
+    //                     if (selectedClient) {
+    //                       setCustomer(selectedClient);
+    //                     }
+    //                   }}
+    //                   onCreateOption={openCreateClientModal} // shows “+ Add client …”
+    //                   formatCreateLabel={(inputValue) =>
+    //                     `+ Add client "${inputValue}"`
+    //                   }
+    //                   placeholder="Search or select client..."
+    //                   isClearable
+    //                   styles={{
+    //                     control: (base) => ({
+    //                       ...base,
+    //                       marginBottom: "10px",
+    //                       minHeight: "40px",
+    //                       borderRadius: "0.375rem",
+    //                       borderColor: "#d1d5db",
+    //                     }),
+    //                     menu: (base) => ({ ...base, zIndex: 9999 }),
+    //                   }}
+    //                   theme={(theme) => ({
+    //                     ...theme,
+    //                     colors: { ...theme.colors, primary: "#1a73e8" },
+    //                   })}
+    //                 />
+    //               </div>
+    //             ) : (
+    //               // Non-Edit Mode: Customer details are displayed as read-only, but still editable in `CreatableSelect`
+    //               <div className="flex flex-col gap-2">
+    //                 <CreatableSelect
+    //                   options={clientOptions}
+    //                   value={selectedClientOption}
+    //                   onChange={(option) => {
+    //                     setSelectedClientOption(option);
+    //                     // Fetch selected client details
+    //                     const selectedClient = clients.find(
+    //                       (client) => client._id === option.value
+    //                     );
+    //                     if (selectedClient) {
+    //                       setCustomer(selectedClient);
+    //                     }
+    //                   }}
+    //                   onCreateOption={openCreateClientModal} // shows “+ Add client …”
+    //                   formatCreateLabel={(inputValue) =>
+    //                     `+ Add client "${inputValue}"`
+    //                   }
+    //                   placeholder="Search or select client..."
+    //                   isClearable
+    //                   styles={{
+    //                     control: (base) => ({
+    //                       ...base,
+    //                       marginBottom: "10px",
+    //                       minHeight: "40px",
+    //                       borderRadius: "0.375rem",
+    //                       borderColor: "#d1d5db",
+    //                     }),
+    //                     menu: (base) => ({ ...base, zIndex: 9999 }),
+    //                   }}
+    //                   theme={(theme) => ({
+    //                     ...theme,
+    //                     colors: { ...theme.colors, primary: "#1a73e8" },
+    //                   })}
+    //                 />
+    //               </div>
+    //             )}
+    //           </div>
+
+    //           {/* Place of Supply */}
+    //           <div>
+    //             <label className="block text-sm font-medium text-gray-700">
+    //               Place of Supply
+    //             </label>
+    //             <input
+    //               placeholder="Place of Supply"
+    //               value={placeOfSupply}
+    //               onChange={(e) => setPlaceOfSupply(e.target.value)}
+    //               className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //             />
+    //           </div>
+
+    //           {/* Items Section */}
+    //           <div className="">
+    //             <h2 className="text-lg font-semibold text-gray-800">Items</h2>
+    //             {items.map((item, idx) => {
+    //               const amount = (item.qty * item.rate).toFixed(2);
+    //               return (
+    //                 <div
+    //                   key={idx}
+    //                   className="border border-gray-300 rounded-lg p-4 mb-2 bg-white shadow-sm"
+    //                 >
+    //                   <label className="block text-sm font-medium text-gray-700">
+    //                     Description
+    //                   </label>
+    //                   <input
+    //                     value={item.description}
+    //                     onChange={(e) =>
+    //                       updateItem(idx, "description", e.target.value)
+    //                     }
+    //                     placeholder="Description"
+    //                     className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2  shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                   />
+
+    //                   <div className="flex flex-col sm:flex-row gap-4">
+    //                     <div className="flex-1">
+    //                       <label className="block text-sm font-medium text-gray-700">
+    //                         Qty
+    //                       </label>
+    //                       <input
+    //                         type="number"
+    //                         value={item.qty}
+    //                         onChange={(e) =>
+    //                           updateItem(idx, "qty", Number(e.target.value))
+    //                         }
+    //                         min={1}
+    //                         className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                       />
+    //                     </div>
+    //                     <div className="flex-1">
+    //                       <label className="block text-sm font-medium text-gray-700">
+    //                         Rate
+    //                       </label>
+    //                       <input
+    //                         type="number"
+    //                         value={item.rate}
+    //                         onChange={(e) =>
+    //                           updateItem(idx, "rate", Number(e.target.value))
+    //                         }
+    //                         step="0.01"
+    //                         className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                       />
+    //                     </div>
+    //                     <div className="flex-1">
+    //                       <label className="block text-sm font-medium text-gray-700">
+    //                         Amount
+    //                       </label>
+    //                       <input
+    //                         readOnly
+    //                         value={`₹${amount}`}
+    //                         className="mt-1 w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-gray-700"
+    //                       />
+    //                     </div>
+
+    //                     <button
+    //                       type="button"
+    //                       onClick={() => deleteItem(item.id)}
+    //                       className="mt-6  transition text-red-500 hover:text-red-800"
+    //                       title="Delete Task"
+    //                     >
+    //                       <FaTrash />
+    //                     </button>
+    //                   </div>
+    //                 </div>
+    //               );
+    //             })}
+
+    //             {/* Add Item Button */}
+    //             <div className="mt-4 bottom-4 bg-white py-2 text-center">
+    //               <button
+    //                 onClick={addItem}
+    //                 className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-medium text-sm transition"
+    //               >
+    //                 + Add Item
+    //               </button>
+    //             </div>
+    //           </div>
+
+    //           {/* Notes Section */}
+    //           <div className="mb-4 notes-section">
+    //             <h2 className="text-lg font-semibold text-gray-800 mb-2">
+    //               Notes
+    //             </h2>
+
+    //             {notes.length === 0 && (
+    //               <div className="text-sm text-gray-500 mb-2">
+    //                 Add your first note for this invoice.
+    //               </div>
+    //             )}
+
+    //             {notes.map((n, idx) => (
+    //               <div
+    //                 key={n.id}
+    //                 className="border border-gray-300 rounded-lg p-3 mb-2 bg-white shadow-sm invoice-note"
+    //               >
+    //                 <label className="block text-sm font-medium text-gray-700 mb-1">
+    //                   Note {idx + 1}
+    //                 </label>
+    //                 <textarea
+    //                   value={n.text}
+    //                   onChange={(e) => updateNote(n.id, e.target.value)}
+    //                   rows={2}
+    //                   placeholder="Write a remark or note for this invoice..."
+    //                   className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    //                 />
+    //                 <div className="flex justify-end mt-2">
+    //                   <button
+    //                     type="button"
+    //                     onClick={() => deleteNote(n.id)}
+    //                     className="text-red-500 hover:text-red-700 text-sm flex items-center gap-2"
+    //                     title="Delete Note"
+    //                   >
+    //                     <FaTrash />
+    //                     Remove
+    //                   </button>
+    //                 </div>
+    //               </div>
+    //             ))}
+
+    //             {/* Add Note button BELOW the notes list */}
+    //             <button
+    //               onClick={addNote}
+    //               className="w-50  bg-gray-600 hover:bg-gray-700 text-white rounded-md font-medium text-sm transition pt-0.5 text-center mb-3.5"
+    //             >
+    //               + Add Note
+    //             </button>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </div>
+
+    //     <div
+    //       className="overflow-y-auto bg-white p-4 rounded-md overflow-x-hidden"
+    //       style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}
+    //     >
+    //       <div
+    //         style={{
+    //           width: PREVIEW_W * PREVIEW_SCALE,
+    //           height: PREVIEW_H * PREVIEW_SCALE,
+    //           overflow: "visible",
+    //         }}
+    //       >
+    //         <div
+    //           className="invoice-right screen-preview"
+    //           ref={invoiceRef}
+    //           style={{
+    //             backgroundColor: "#fff",
+    //             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    //             fontSize: 12,
+    //             color: "#000",
+    //             width: PREVIEW_W,
+    //             height: PREVIEW_H,
+    //             transform: `scale(${previewScale})`,
+    //             transformOrigin: "top left",
+    //             boxShadow: "0 0 0 1px #e5e7eb",
+    //           }}
+    //         >
+    //           <div>
+    //             <InvoicePage
+    //               pageNumber={1}
+    //               itemsOnPage={page1Items}
+    //               offset={offsetPage1}
+    //               isLastPage={page2Items.length === 0}
+    //               customer={customer}
+    //               selectedFirm={{ ...selectedFirm, bank: activeBank }}
+    //               invoiceType={invoiceType}
+    //               invoiceNumber={invoiceNumber}
+    //               invoiceDate={invoiceDate}
+    //               placeOfSupply={placeOfSupply}
+    //               isSharda={isSharda}
+    //               totalAmount={totalAmount}
+    //               totalAmountWithTax={totalAmountWithTax}
+    //               taxableValue={taxableValue}
+    //               igstAmount={igstAmount}
+    //               cgstAmount={cgstAmount}
+    //               sgstAmount={sgstAmount}
+    //               numberToWordsIndian={numberToWordsIndian}
+    //               onImagesLoaded={() => setImagesReady(true)}
+    //               showGSTIN={showGSTIN}
+    //               notes={notesPage1}
+    //             />
+
+    //             {page2Items.length > 0 && (
+    //               <InvoicePage
+    //                 pageNumber={2}
+    //                 itemsOnPage={page2Items}
+    //                 offset={offsetPage2}
+    //                 isLastPage={true}
+    //                 customer={customer}
+    //                 // selectedFirm={selectedFirm}
+    //                 selectedFirm={{ ...selectedFirm, bank: activeBank }}
+    //                 invoiceType={invoiceType}
+    //                 invoiceNumber={invoiceNumber}
+    //                 invoiceDate={invoiceDate}
+    //                 placeOfSupply={placeOfSupply}
+    //                 isSharda={isSharda}
+    //                 totalAmount={totalAmount}
+    //                 totalAmountWithTax={totalAmountWithTax}
+    //                 taxableValue={taxableValue}
+    //                 igstAmount={igstAmount}
+    //                 cgstAmount={cgstAmount}
+    //                 sgstAmount={sgstAmount}
+    //                 numberToWordsIndian={numberToWordsIndian}
+    //                 onImagesLoaded={() => setImagesReady(true)}
+    //                 notes={notesPage2}
+    //                 showGSTIN={showGSTIN}
+    //               />
+    //             )}
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+
+    //   {/* create client modal */}
+    //   {createClientOpen && (
+    //     <CreateClientModal
+    //       client={draftClient} // prefill name
+    //       onClose={() => {
+    //         setCreateClientOpen(false);
+    //         setDraftClient(null);
+    //       }}
+    //       onCreate={handleCreateClient} // receives full formData
+    //     />
+    //   )}
+    // </>
+
+
+
+
+
+
+
     <>
-      <div className="flex justify-between  bg-[#F0F0F0]">
-        <h1 className="text-3xl p-2 mt-4 font-bold font-sans  pb-2">
+      {/* Header with buttons at the top */}
+      <div className="flex justify-between items-center bg-[#F0F0F0] p-4">
+        <h1 className="text-3xl font-bold font-sans">
           {isEdit ? "Update & Download Invoice" : "Create Invoice"}
-           </h1>
-           {!isEdit && 
-        <button
-          onClick={handleBack}
-          style={{ backgroundColor: "#7DA2C6" }}
-          className="font-sans fixed top-4 right-4 rounded-sm bg-blue-500 text-white py-3 px-6 shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Back to Invoices
-        </button>
-        }
+        </h1>
+        
+        <div className="flex gap-2">
+          {/* Save & Generate PDF Button (for create mode) */}
+          {!isEdit && (
+            <button
+              onClick={handleSaveAndDownloadPDF}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              title="Save and Download PDF"
+            >
+              <FiSave className="w-4 h-4" />
+              <span>Save & Generate PDF</span>
+              <FiDownload className="w-4 h-4" />
+            </button>
+          )}
+          
+          {/* Update Invoice Button (for edit mode) */}
+          {isEdit && (
+            <button
+              onClick={handleUpdateInvoice}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              title="Update Invoice"
+            >
+              <FiSave className="w-4 h-4" />
+              <span>Update Invoice</span>
+            </button>
+          )}
+          
+          {/* Download PDF Button (for edit mode) */}
+          {isEdit && (
+            <button
+              onClick={handleDownloadPDF}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              title="Download PDF"
+            >
+              <FiDownload className="w-4 h-4" />
+              <span>Download PDF</span>
+            </button>
+          )}
+          
+          {/* Back to Invoices Button */}
+          {!isEdit && 
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+          >
+            <FaBackward className="text-sm" />
+            <span>Back to Invoices</span>
+          </button>
+          }
+          {/* Close Button (only shown when onClose prop is provided) */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+            >
+              Close
+            </button>
+          )}
+        </div>
       </div>
-      <div className=" flex gap-5 p-5 bg-white overflow-x-auto items-start max-h-[95vh] overflow-y-hidden">
+
+      <div className="flex gap-5 p-5 bg-white overflow-x-auto items-start max-h-[95vh] overflow-y-hidden">
         {/* Left form side */}
         <div
-          className="scrollable-panel flex-none  h-full overflow-y-auto pr-2 box-border pl-1"
+          className="scrollable-panel flex-none h-full overflow-y-auto pr-2 box-border pl-1"
           style={{ width: "50%", maxHeight: "90vh", overflowY: "auto" }}
         >
           <div className="max-h-[90vh] overflow-y-auto pt-5 pr-1">
-            {/* ... Your left side inputs and controls ... */}
-            <div>
-              <div className="flex gap-2 justify-center items-center mb-3">
-                {isEdit && (
-                  <button
-                    onClick={handleUpdateInvoice} // Function to handle updating invoice
-                    className="px-4 py-2 bg-slate-500 text-white rounded-md hover:bg-slate-700 flex items-center gap-2"
-                    title="Update Invoice"
-                  >
-                    <FiSave className="w-4 h-4" />
-                    <span>Update Invoice</span>
-                  </button>
-                )}
-
-                {/* Download PDF Button (Only visible in edit mode) */}
-                {isEdit && (
-                  <button
-                    onClick={handleDownloadPDF} // Function to handle downloading PDF
-                    className="px-4 py-2 bg-indigo-400 text-white rounded-md hover:bg-indigo-500 flex items-center gap-2"
-                    title="Download PDF"
-                  >
-                    <FiDownload className="w-4 h-4" />
-                    <span>Download PDF</span>
-                  </button>
-                )}
-
-                {/* Combined button for Save & Generate PDF in non-edit mode */}
-                {!isEdit && (
-                  <button
-                    onClick={handleSaveAndDownloadPDF} // Function to save and download PDF
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center gap-2"
-                    title="Save and Download PDF"
-                  >
-                    <FiSave className="w-4 h-4" />
-                    <span>Save & Generate PDF</span>
-                    <FiDownload className="w-4 h-4" />
-                  </button>
-                )}
-
-                {onClose && (
-                  <button
-                    onClick={onClose}
-                    className="px-4 py-2 border rounded"
-                  >
-                    Close
-                  </button>
-                )}
-                {/* You can add a close button as well */}
-                {!isEdit && 
-                <button
-                  onClick={handleBack}
-                  className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
-                >
-                  Close
-                </button>
-                }
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              {/* Date Range */}
-              {!isEdit && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      From Date
-                    </label>
-                    <input
-                      type="date"
-                      value={fromDate}
-                      onChange={(e) => setFromDate(e.target.value)}
-                      max={toDate || undefined}
-                      className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      To Date
-                    </label>
-                    <input
-                      type="date"
-                      value={toDate}
-                      onChange={(e) => setToDate(e.target.value)}
-                      min={fromDate || undefined}
-                      className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+            {/* Date Range */}
+            {!isEdit && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    From Date
+                  </label>
+                  <input
+                    type="date"
+                    value={fromDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                    max={toDate || undefined}
+                    className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
-              )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    To Date
+                  </label>
+                  <input
+                    type="date"
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                    min={fromDate || undefined}
+                    className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            )}
 
-              {isEdit && (
+            {isEdit && (
                 <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 mb-3">
                   <div className="col-span-2">
                     <label className="block text-xs text-gray-600">
@@ -1087,54 +1684,44 @@ export default function InvoiceForm({
                   </div>
                 </div>
               )}
+            
+            {/* Firm Selection */}
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                Your Details
+              </h2>
+              <label className="block text-sm font-medium text-gray-700">
+                Select Firm
+              </label>
 
-              {/* Firm Selection */}
-
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                  Your Details
-                </h2>
-                <label className="block text-sm font-medium text-gray-700">
-                  Select Firm
-                </label>
-
-                {firmsLoading ? (
-                  <div className="mt-1 text-sm text-gray-500">
-                    Loading firms…
-                  </div>
-                ) : firmsError ? (
-                  <div className="mt-1 text-sm text-red-600">{firmsError}</div>
-                ) : (
-                  <select
-                    value={selectedFirmId}
-                    onChange={(e) => setSelectedFirmId(e.target.value)}
-                    disabled={isEdit}
-                    // className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    className={`mt-1 w-full border rounded-md px-3 py-2 shadow-sm 
+              {firmsLoading ? (
+                <div className="mt-1 text-sm text-gray-500">
+                  Loading firms…
+                </div>
+              ) : firmsError ? (
+                <div className="mt-1 text-sm text-red-600">{firmsError}</div>
+              ) : (
+                <select
+                  value={selectedFirmId}
+                  onChange={(e) => setSelectedFirmId(e.target.value)}
+                  disabled={isEdit}
+                  className={`mt-1 w-full border rounded-md px-3 py-2 shadow-sm 
                     ${
                       isEdit
                         ? "locked-field locked-cursor bg-yellow-50 border-yellow-300"
                         : "border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     }`}
-                    aria-disabled={isEdit}
-                    onMouseDown={(e) => {
-                      if (isEdit) e.preventDefault();
-                    }}
-                    onKeyDown={(e) => {
-                      if (isEdit && !["Tab", "Shift", "Escape"].includes(e.key))
-                        e.preventDefault();
-                    }}
-                  >
-                    {firms.map((f) => (
-                      <option key={f._id} value={f._id}>
-                        {f.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </div>
+                >
+                  {firms.map((f) => (
+                    <option key={f._id} value={f._id}>
+                      {f.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
 
-              {selectedFirm?.banks?.length > 0 && (
+           {selectedFirm?.banks?.length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Select Bank Account
@@ -1169,12 +1756,12 @@ export default function InvoiceForm({
                     onChange={(e) => setInvoiceType(e.target.value)}
                     disabled={isEdit}
                     // className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    className={`mt-1 w-full border rounded-md px-3 py-2 shadow-sm
-                  ${
-                    isEdit
-                      ? "locked-field locked-cursor"
-                      : "border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  }`}
+                    className={`mt-1 w-full border rounded-md px-3 py-2 shadow-sm 
+                    ${
+                      isEdit
+                        ? "locked-field locked-cursor bg-yellow-50 border-yellow-300"
+                        : "border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    }`}
                     aria-disabled={isEdit}
                     onMouseDown={(e) => {
                       if (isEdit) e.preventDefault();
@@ -1443,9 +2030,11 @@ export default function InvoiceForm({
                 </button>
               </div>
             </div>
+            
           </div>
-        </div>
+       
 
+        {/* Right preview side */}
         <div
           className="overflow-y-auto bg-white p-4 rounded-md overflow-x-hidden"
           style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}
@@ -1460,21 +2049,6 @@ export default function InvoiceForm({
             <div
               className="invoice-right screen-preview"
               ref={invoiceRef}
-              // style={{
-              //   backgroundColor: "#fff",
-              //   fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-              //   fontSize: 12,
-              //   color: "#000",
-              //   // transform: "scale(0.90)",
-              //   // transformOrigin: "top left",
-              //   position: "relative",
-              //   // width: "794px",
-              //   width: PREVIEW_W,
-              //   height: PREVIEW_H,
-              //   transform: `scale(${previewScale})`,
-              //   transformOrigin: "top left",
-              //   boxShadow: "0 0 0 1px #e5e7eb",
-              // }}
               style={{
                 backgroundColor: "#fff",
                 fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
@@ -1519,7 +2093,6 @@ export default function InvoiceForm({
                     offset={offsetPage2}
                     isLastPage={true}
                     customer={customer}
-                    // selectedFirm={selectedFirm}
                     selectedFirm={{ ...selectedFirm, bank: activeBank }}
                     invoiceType={invoiceType}
                     invoiceNumber={invoiceNumber}
@@ -1544,15 +2117,15 @@ export default function InvoiceForm({
         </div>
       </div>
 
-      {/* create client modal */}
+      {/* Create client modal */}
       {createClientOpen && (
         <CreateClientModal
-          client={draftClient} // prefill name
+          client={draftClient}
           onClose={() => {
             setCreateClientOpen(false);
             setDraftClient(null);
           }}
-          onCreate={handleCreateClient} // receives full formData
+          onCreate={handleCreateClient}
         />
       )}
     </>

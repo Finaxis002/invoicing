@@ -514,14 +514,6 @@
   box-sizing: border-box;
   overflow: hidden;
   margin: 0 !important;
-
-  /* ✅ Page breaking rules */
-  /* page-break-after: always;
-  page-break-inside: avoid;
-  break-inside: avoid; */
-
-  /* ✅ Diagnostic color to check visibility */
-  background-color: red;
 }
 
 .pdf-wrapper:last-child {
@@ -680,7 +672,6 @@
 }
 
 .scrollable-panel::-webkit-scrollbar-track {
-  background-color: #e61010; /* Set track color */
   border-radius: 4px;
 }
 
