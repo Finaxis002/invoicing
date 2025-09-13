@@ -17,7 +17,7 @@ const ProfileDropdown = () => {
       {/* Profile Icon */}
       <button
         type="button"
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-300 text-white hover:bg-yellow-600"
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-300 text-white hover:bg-yellow-600 bg-gradient-to-r from-orange-500 to-indigo-500"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         <FaUserAlt className="w-5 h-5" />
