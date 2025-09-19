@@ -1970,66 +1970,7 @@ const exportInvoices = async () => {
         </div>
       )}
 
-      {/* Invoice Preview Modal */}
-      {/* {showInvoiceModal && invoiceToView && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-xl font-semibold text-gray-800">
-                Invoice Preview: {invoiceToView.invoiceNumber}
-              </h2>
-              <button
-                onClick={() => setShowInvoiceModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="overflow-y-auto flex-grow p-6">
-              <div id="invoice-to-print" className="bg-white mx-auto">
-                <InvoicePreview
-                  selectedFirm={invoiceToView.selectedFirm}
-                  invoiceType={invoiceToView.invoiceType}
-                  invoiceNumber={invoiceToView.invoiceNumber}
-                  invoiceDate={invoiceToView.invoiceDate}
-                  placeOfSupply={invoiceToView.placeOfSupply}
-                  customer={invoiceToView.customer}
-                  items={invoiceToView.items}
-                  notes={invoiceToView.notes}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 p-6 border-t">
-              <button
-                onClick={() => setShowInvoiceModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleGeneratePDF}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Download PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
-
+      
       {/* New Invoice Form Modal */}
       {showInvoiceForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
